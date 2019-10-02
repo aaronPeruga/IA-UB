@@ -282,7 +282,11 @@ class CornersProblem(search.SearchProblem):
         """
         self.walls = startingGameState.getWalls()
         self.startingPosition = startingGameState.getPacmanPosition()
+        
+        #Top and right positions
         top, right = self.walls.height-2, self.walls.width-2
+        
+        #All Corners
         self.corners = ((1,1), (1,top), (right, 1), (right, top))
         for corner in self.corners:
             if not startingGameState.hasFood(*corner):
@@ -291,6 +295,8 @@ class CornersProblem(search.SearchProblem):
         # Please add any code here which you would like to use
         # in initializing the problem
         "*** YOUR CODE HERE ***"
+        
+        
 
     def getStartState(self):
         """
@@ -298,13 +304,16 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self.startingPosition
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
+        
+        #Cuando has visitado todas las esquinas, ya habremos acabado.
+        
         util.raiseNotDefined()
 
     def getSuccessors(self, state):

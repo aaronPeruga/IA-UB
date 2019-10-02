@@ -94,37 +94,77 @@ def depthFirstSearch(problem):
     print "Is the start a goal?", problem.isGoalState(problem.getStartState())
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     
+    
+    closed = list()
+    frontier = util.Stack()
+    solution = list()
+    
     start = problem.getStartState()
     
-    bad_nodes = util.Stack()
-    non_visited = util.Stack()
-    non_visited.push(start)
-    solution = False
+    frontier.push((start,[],0))
     
-    node = non_visited.pop()
-    
-    while(solution==False):
-        if non_visited.isEmpty(): 
-            break
+    while not frontier.isEmpty():
         
-        if(node.isGoalState(node)):
-            solution = True
-        else:
-            bad_nodes.push(node)
-            for n in node.getSuccesors(node):
-                non_visited.push(n)
-    
-    print(solution)
-    
-    util.raiseNotDefined()
+        node,path,cost = frontier.pop()
+        
+        if problem.isGoalState(node):
             
+            solution = path
+            break
+            
+        else:
+            if node not in closed:
+                closed.append(node)
+                for packet in problem.getSuccessors(node):
+                    
+                    newNode = packet[0]
+                    newPath = path +  [packet[1]]
+                    newCost = cost + packet[2]
+                    if newNode not in closed:
+                        frontier.push((newNode,newPath,cost))
+                        
+    return solution
     
-       
     
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
+    print "Start:", problem.getStartState()
+    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
+    print "Start's successors:", problem.getSuccessors(problem.getStartState())
+    
+    frontier = util.Queue()
+    closed = list()
+    solution = list()
+    
+    start = problem.getStartState()
+    
+    frontier.push((start,[],0))
+    closed.append(start)
+    
+    while not frontier.isEmpty():
+        
+        node, path, cost = frontier.pop()
+        
+        if problem.isGoalState(node):
+            solution = path
+            break
+            
+        else:
+            for pack in problem.getSuccessors(node):
+                if pack[0] not in closed:
+                    
+                    newNode = pack[0]
+                    newPath = path + [pack[1]]
+                    newCost = cost + pack[2]
+                    
+                    frontier.push((newNode,newPath,newCost))
+                    closed.append(pack[0])
+                    
+    
+    return solution
+        
     util.raiseNotDefined()
 
 def uniformCostSearch(problem):
@@ -142,6 +182,45 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
+    print "Start:", problem.getStartState()
+    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
+    print "Start's successors:", problem.getSuccessors(problem.getStartState())
+    
+    frontier = util.PriorityQueue()
+    closed = list()
+    solution = list()
+    
+    start = problem.getStartState()
+    
+    #f(start) = f(g) + f(h) = 0 + manhattan euristic
+    frontier.push((start,[],0),heuristic(start,problem))
+    closed.append(start)
+    
+    while not frontier.isEmpty():
+        
+        parent = frontier.pop()
+        
+        node = parent[0]
+        path = parent[1]
+        cost = parent[2]
+        
+        if problem.isGoalState(node):
+            print path
+            break
+            
+        for childs in problem.getSuccessors(node):
+            if childs[0] not in closed:
+                
+                newNode = childs[0]
+                newPath = path + [childs[1]]
+                newCost = cost + childs[2]
+                
+                frontier.push((newNode,newPath,newCost),newCost +  heuristic(newNode,problem))
+                
+                closed.append(childs[0])
+    
+    
+    return path
     util.raiseNotDefined()
 
 
