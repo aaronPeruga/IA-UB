@@ -92,7 +92,6 @@ def depthFirstSearch(problem):
     "*** YOUR CODE HERE ***"
     print "Start:", problem.getStartState()
     print "Is the start a goal?", problem.isGoalState(problem.getStartState())
-    print "Start's successors:", problem.getSuccessors(problem.getStartState())
     
     
     closed = list()
@@ -132,7 +131,6 @@ def breadthFirstSearch(problem):
     "*** YOUR CODE HERE ***"
     print "Start:", problem.getStartState()
     print "Is the start a goal?", problem.isGoalState(problem.getStartState())
-    print "Start's successors:", problem.getSuccessors(problem.getStartState())
     
     frontier = util.Queue()
     closed = list()
@@ -182,18 +180,23 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
+    
     print "Start:", problem.getStartState()
     print "Is the start a goal?", problem.isGoalState(problem.getStartState())
-    print "Start's successors:", problem.getSuccessors(problem.getStartState())
     
     frontier = util.PriorityQueue()
+    
+    heuristic_dict = dict()
     closed = list()
     solution = list()
+    
     
     start = problem.getStartState()
     
     #f(start) = f(g) + f(h) = 0 + manhattan euristic
     frontier.push((start,[],0),heuristic(start,problem))
+    heuristic_dict[start]=heuristic(start,problem)
+    
     closed.append(start)
     
     while not frontier.isEmpty():
@@ -205,7 +208,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
         cost = parent[2]
         
         if problem.isGoalState(node):
-            print path
+            solution = path
             break
             
         for childs in problem.getSuccessors(node):
@@ -215,13 +218,14 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                 newPath = path + [childs[1]]
                 newCost = cost + childs[2]
                 
-                frontier.push((newNode,newPath,newCost),newCost +  heuristic(newNode,problem))
+                
+                frontier.push((newNode,newPath,newCost),childs[2] +  heuristic(newNode,problem))
                 
                 closed.append(childs[0])
+                heuristic_dict[newNode]= childs[2] +  heuristic(newNode,problem)
+                      
     
-    
-    return path
-    util.raiseNotDefined()
+    return solution
 
 
 # Abbreviations
