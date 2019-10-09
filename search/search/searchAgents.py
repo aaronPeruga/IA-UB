@@ -322,7 +322,7 @@ class CornersProblem(search.SearchProblem):
         #Cuando has visitado todas las esquinas, ya habremos acabado.
         
         isGoal = False
-        if state[1] == [True]*4:
+        if state[1] == [True]*4:      #If all corners are visited,we have finished
             isGoal = True
                
         return isGoal
@@ -351,19 +351,21 @@ class CornersProblem(search.SearchProblem):
             #   hitsWall = self.walls[nextx][nexty]
 
             "*** YOUR CODE HERE ***"
-            x,y = state[0]
-            visited = state[1]
             
-            dx, dy = Actions.directionToVector(action)
-            nextx, nexty = int(x + dx), int(y + dy)
+            x,y = state[0]      #The current position
             
-            visited_new = visited[:]
+            visited = state[1]  #The list of the corners
             
-            hitsWall = self.walls[nextx][nexty]
+            dx, dy = Actions.directionToVector(action) 
+            nextx, nexty = int(x + dx), int(y + dy)    #The position of the successor
             
-            if not hitsWall:
+            visited_new = visited[:]  #copy the list
+            
+            hitsWall = self.walls[nextx][nexty]   
+            
+            if not hitsWall:   #If there's a wall...
                 
-                for i in range(0,len(self.corners)):
+                for i in range(0,len(self.corners)):       #Put true if one of the corners is visited
                     if (nextx,nexty) == self.corners[i]:
                         visited_new[i]=True
                         break
@@ -371,7 +373,7 @@ class CornersProblem(search.SearchProblem):
                     
                 nextState = ((nextx, nexty),visited_new)
                 cost = 1
-                successors.append( ( nextState, action, cost) )
+                successors.append( ( nextState, action, cost) )  #Append to successors
             
 
         self._expanded += 1 # DO NOT CHANGE
@@ -415,14 +417,14 @@ def cornersHeuristic(state, problem):
     
     unvisited = []
     
-    for x in range(0,len(corners)):
-        if visited_list[x] == False:
+    for x in range(0,len(corners)):           #Check the unvisited corners
+        if visited_list[x] == False:         
             unvisited.append(corners[x])
     
     h_list = []
     
     
-    while unvisited:
+    while unvisited:  #If is not visited, calculate the distance to 4 corners to starting to the nearest corner.
         
         for corner in unvisited:
             
@@ -540,6 +542,12 @@ def foodHeuristic(state, problem):
     h = 0
     
     
+    """
+    Calculate the distance from pacman to the nearest food, and then from the nearest food
+    to the other foods
+    
+    Return the sum of the minimun distance from pacman to food and the maximun from to food to food
+    """
     
     for food in foodGrid:
         distance.append(abs(position[0] - food[0]) + abs(position[1] - food[1]))

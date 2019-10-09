@@ -94,24 +94,26 @@ def depthFirstSearch(problem):
     print "Is the start a goal?", problem.isGoalState(problem.getStartState())
     
     
-    closed = list()
-    frontier = util.Stack()
-    solution = list()
+    frontier = util.Stack()  #Frontier is a Stack. We put the states we will visit.
+    closed = list()         #Visited states list.
+    solution = list()       #Our solution
     
-    start = problem.getStartState()
+    start = problem.getStartState()  #start position.
     
-    frontier.push((start,[],0))
+    frontier.push((start,[],0))  #Push into the stack
     
-    while not frontier.isEmpty():
+    
+    while not frontier.isEmpty():  #If the frontier is not empty
         
-        node,path,cost = frontier.pop()
+        node,path,cost = frontier.pop()   #Extract a state
         
-        if problem.isGoalState(node):
+        if problem.isGoalState(node):   #If node is the end, return solution.
             
             solution = path
             break
             
-        else:
+        else:    #If the node is not in close, we add it and push their neighboors into the stack.
+            
             if node not in closed:
                 closed.append(node)
                 for packet in problem.getSuccessors(node):
@@ -122,7 +124,7 @@ def depthFirstSearch(problem):
                     if newNode not in closed:
                         frontier.push((newNode,newPath,cost))
                         
-    return solution
+    return solution #return the path to our solution 
     
     
 
@@ -132,25 +134,26 @@ def breadthFirstSearch(problem):
     print "Start:", problem.getStartState()
     print "Is the start a goal?", problem.isGoalState(problem.getStartState())
     
-    frontier = util.Queue()
-    closed = list()
-    solution = list()
+    frontier = util.Queue()    #Frontier is a Queue. We put the states we will visit.
+    closed = list()         #Visited states list.
+    solution = list()       #Our solution
     
-    start = problem.getStartState()
+    start = problem.getStartState()      #start position.
     
-    frontier.push((start,[],0))
-    closed.append(start)
+    frontier.push((start,[],0))         #Push into the stack
+    closed.append(start)           #Put the state as visited
     
-    while not frontier.isEmpty():
+    while not frontier.isEmpty():   #If the frontier is not empty
+
+        node, path, cost = frontier.pop()   #Extract a state
         
-        node, path, cost = frontier.pop()
-        
-        if problem.isGoalState(node):
+        if problem.isGoalState(node):    #If node is the end, return solution.
             solution = path
             break
             
         else:
-            for pack in problem.getSuccessors(node):
+            for pack in problem.getSuccessors(node):  #If the node is not in the Queue, we add it and push 
+                                                      #their neighboors into the stack.
                 if pack[0] not in closed:
                     
                     newNode = pack[0]
@@ -162,7 +165,7 @@ def breadthFirstSearch(problem):
                     
     
     
-    return solution
+    return solution  #Return the path to our solution
         
     util.raiseNotDefined()
 
@@ -193,27 +196,28 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     
     frontier.push((start,[],0),heuristic(start,problem))
     
-    while not frontier.isEmpty():
+    while not frontier.isEmpty():           #If frontier is not empty
         
-        node,path,cost = frontier.pop()
+        node,path,cost = frontier.pop()    #Extract the node with the lowest heuristic
         
-        if not node in closed:
+        if not node in closed:         #if the node not in closed, append it.
             closed.append(node)
-            if problem.isGoalState(node):
+            
+            if problem.isGoalState(node):  #if the node is the goal, we return the solution
                 solution = path        
                 break
-            for pack in problem.getSuccessors(node):
+            for pack in problem.getSuccessors(node): #For every successor:
                 
-                newNode = pack[0]
-                newPath = path + [pack[1]]
+                newNode = pack[0]          #Extract the new node
+                newPath = path + [pack[1]] #add action to the path
+                
+                #Calculate the new heuristic for this node
                 newCost = problem.getCostOfActions(newPath) + heuristic(newNode,problem)
                 
+                #Push state in the Priority Queue
                 frontier.push((newNode,newPath,problem.getCostOfActions(newPath)),newCost)
-                
-                
-                
-            
-    return solution
+                           
+    return solution #Return solution-
 
 
 # Abbreviations
