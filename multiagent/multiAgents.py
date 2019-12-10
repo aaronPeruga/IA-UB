@@ -347,7 +347,92 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         a = self.expectimax(gameState,0,pacman)
         
         return a[1]
+
+class expectimaxMinimaxAgent2(MultiAgentSearchAgent):
+    """
+      Your expectimax agent (question 4)
+    """
+    
+    def expectimax_minimax(self,gameState,depth,index):
+        """
+        Expectimax Function.
         
+        @param: gameState
+        @param: depth
+        @param: index of the agent
+        """
+        
+        num_agents = gameState.getNumAgents()
+        agents = index%num_agents
+        depth += index//num_agents
+            
+        if gameState.isLose() or gameState.isWin() or self.depth == depth:
+            return (self.evaluationFunction(gameState),None)
+        
+        else:
+            
+            v = []
+            
+            #If its pacman, we will maximize
+            if agents == 0:
+                
+                
+                for action in gameState.getLegalActions(agents):
+                    v.append((self.expectimax_minimax(gameState.generateSuccessor(agents,action),depth,agents+1)[0],action))
+                max_value = max(v)
+                
+                return max_value
+
+            #if not, for every action of the agent we will return the mean of the all evaluations
+            else:
+                
+                beta = 0
+                v = []
+                num_actions = 0
+                
+                #EXPECTIMAX
+                if agents%2 == 0:
+                
+                    for action in gameState.getLegalActions(agents):
+                        num_actions += 1
+                        v.append(self.expectimax_minimax(gameState.generateSuccessor(agents,action),depth,agents+1)[0])
+                    
+                    if len(v) != 1:
+                        v.remove(max(v))
+                        for i in v:
+                            beta += i
+                        
+                        return (beta/num_actions,None)
+                        
+                    else:
+                        return (max(v)/num_actions,None)
+                    
+                #MINIMAX 
+                if agents%2==1:
+                    
+                    for action in gameState.getLegalActions(agents):
+                        state = gameState.generateSuccessor(agents,action)
+                        v.append((self.expectimax_minimax(state,depth,agents+1)[0],action))
+                    min_value = min(v)
+                    return min_value
+                    
+                    
+                
+    
+
+    def getAction(self, gameState):
+        """
+          Returns the expectimax action using self.depth and self.evaluationFunction
+
+          All ghosts should be modeled as choosing uniformly at random from their
+          legal moves.
+        """
+        "*** YOUR CODE HERE ***"
+        
+        pacman = 0
+        a = self.expectimax_minimax(gameState,0,pacman)
+        
+        return a[1]
 
 def betterEvaluationFunction(currentGameState):
     """
