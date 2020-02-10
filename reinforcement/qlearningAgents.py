@@ -42,7 +42,8 @@ class QLearningAgent(ReinforcementAgent):
     def __init__(self, **args):
         "You can initialize Q-values here..."
         ReinforcementAgent.__init__(self, **args)
-        self.Q = util.Counter()
+
+        self.Q = util.Counter() #Init Counter to save all qvalues.
         "*** YOUR CODE HERE ***"
 
     def getQValue(self, state, action):
@@ -51,8 +52,7 @@ class QLearningAgent(ReinforcementAgent):
           Should return 0.0 if we have never seen a state
           or the Q node value otherwise
         """
-        "*** YOUR CODE HERE ***"
-         
+        # Q[(state,action)] returns the qvalue of a state and a action
         return self.Q[(state,action)]
 
 
@@ -69,6 +69,7 @@ class QLearningAgent(ReinforcementAgent):
         if len(legalActions) == 0:
             return 0.0
         
+	#Return the biggest qvalues from actions of a state.
         max_actions = [self.getQValue(state, actions) for actions in legalActions]
         return max(max_actions)
 
@@ -105,10 +106,12 @@ class QLearningAgent(ReinforcementAgent):
         legalActions = self.getLegalActions(state)
         action = None
         eps = self.epsilon
-        "*** YOUR CODE HERE ***"
+
         if len(legalActions) == 0:
             return None
         
+	#if epsilon: choose random action
+	#if 1 - eps: chose best action fromQvalues
         if util.flipCoin(eps):
             return random.choice(legalActions)
         else:
@@ -125,6 +128,7 @@ class QLearningAgent(ReinforcementAgent):
         """
         "*** YOUR CODE HERE ***"
         
+	#Calculate the sample and the qvalue for a state
         sample = self.alpha * (reward + self.discount*self.computeValueFromQValues(nextState))
         
         self.Q[(state,action)] = (1-self.alpha) * self.Q[(state,action)] + sample
